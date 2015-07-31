@@ -16,7 +16,8 @@ storyPoints <- function(path){
   # library('stringr')
   
   # load CSV file into memory
-  data <- read.csv(path)
+  # stringsAsFactors = FALSE; to avoid having columns of class factor
+  data <- read.csv(path, stringsAsFactors = FALSE)
   
   # remove top two space rows
   data <- data[c(3:dim(data)[1]), ]
@@ -27,9 +28,13 @@ storyPoints <- function(path){
   # remove first - repeat of header / col names
   data <- data[-1,]
   
+  # remove special characters
+  # remove openning and closing quotations (not virtical " quotes)
+  data$Summary <- gsub("\xd2|\xd3", "",data$Summary)
+  
   # iterate through summary column to extract story points into new variable / column
-  for (i in data$Summary) {
-    data$storyPoints <- extract(i)
+  for (i in data) {
+    data$storyPoints <- extract(data$Summary[i])
   }
   
 }
